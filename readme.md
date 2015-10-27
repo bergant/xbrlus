@@ -30,7 +30,7 @@ Get information about companies and XBRL concepts with `xbrlCIKLookup`
 and `xbrlBaseElement`: 
 
 ```r
-library(xbrlus)
+library(xbrlus) 
 
 companies <- xbrlCIKLookup(c(
   "aapl", 
@@ -55,7 +55,7 @@ elements <- xbrlBaseElement(c(
 Use `xbrlValues` to get balance sheet values:
 
 ```r
-values <- xbrlValues(
+values <- xbrlValues( 
   CIK = companies$cik, 
   Element = elements$elementName, 
   DimReqd = FALSE, 
@@ -73,107 +73,45 @@ Reshape to wide format and print table:
 ```r
 library(dplyr)
 library(tidyr)
-library(htmlTable)
 
 balance_sheet <- 
   elements %>% 
   left_join(values, by = "elementName") %>% 
   select(entity, standard.text, amount) %>% 
   mutate(amount = round(amount / 10e6,0)) %>%  
-  spread(entity, amount )
+  spread(entity, amount)
 
-balance_sheet <- balance_sheet[order(order(elements$elementName)), ]  
-htmlTable(balance_sheet, 
-          align="lrrr", align.header = "lrrr", 
-          rnames = FALSE, 
-          caption = "Bilance Sheet Comparison")
+balance_sheet <- balance_sheet[
+    order(order(elements$elementName)),   
+    !is.na(names(balance_sheet))]
+row.names(balance_sheet) <- NULL
+
+library(pander)
+pandoc.table(
+  balance_sheet,
+  caption = "Balance Sheet Comparison",
+  big.mark = ",",
+  split.table = 200,
+  style = "rmarkdown",
+  justify = c("left", rep("right", 3)))
 ```
 
-<table class='gmisc_table' style='border-collapse: collapse;' >
-<thead>
-<tr><td colspan='5' style='text-align: left;'>
-Bilance Sheet Comparison</td></tr>
-<tr>
-<th style='border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: left;'>standard.text</th>
-<th style='border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: right;'>APPLE INC</th>
-<th style='border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: right;'>FACEBOOK INC</th>
-<th style='border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: right;'>Google Inc.</th>
-<th style='border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: right;'></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style='text-align: left;'>Assets, Current</td>
-<td style='text-align: right;'>7329</td>
-<td style='text-align: right;'>1307</td>
-<td style='text-align: right;'>7289</td>
-<td style='text-align: right;'></td>
-</tr>
-<tr>
-<td style='text-align: left;'>Assets, Noncurrent</td>
-<td style='text-align: right;'></td>
-<td style='text-align: right;'></td>
-<td style='text-align: right;'>3803</td>
-<td style='text-align: right;'></td>
-</tr>
-<tr>
-<td style='text-align: left;'>Assets</td>
-<td style='text-align: right;'>20700</td>
-<td style='text-align: right;'>1790</td>
-<td style='text-align: right;'>11092</td>
-<td style='text-align: right;'></td>
-</tr>
-<tr>
-<td style='text-align: left;'>Liabilities, Current</td>
-<td style='text-align: right;'>4366</td>
-<td style='text-align: right;'>110</td>
-<td style='text-align: right;'>1591</td>
-<td style='text-align: right;'></td>
-</tr>
-<tr>
-<td style='text-align: left;'>Liabilities, Noncurrent</td>
-<td style='text-align: right;'></td>
-<td style='text-align: right;'></td>
-<td style='text-align: right;'></td>
-<td style='text-align: right;'></td>
-</tr>
-<tr>
-<td style='text-align: left;'>Liabilities</td>
-<td style='text-align: right;'>8345</td>
-<td style='text-align: right;'>242</td>
-<td style='text-align: right;'></td>
-<td style='text-align: right;'></td>
-</tr>
-<tr>
-<td style='text-align: left;'>Stockholders' Equity Attributable to Parent</td>
-<td style='text-align: right;'>12355</td>
-<td style='text-align: right;'>1547</td>
-<td style='text-align: right;'>8731</td>
-<td style='text-align: right;'></td>
-</tr>
-<tr>
-<td style='text-align: left;'>Stockholders' Equity Attributable to Noncontrolling Interest</td>
-<td style='text-align: right;'></td>
-<td style='text-align: right;'></td>
-<td style='text-align: right;'></td>
-<td style='text-align: right;'></td>
-</tr>
-<tr>
-<td style='text-align: left;'>Stockholders' Equity, Including Portion Attributable to Noncontrolling Interest</td>
-<td style='text-align: right;'></td>
-<td style='text-align: right;'></td>
-<td style='text-align: right;'></td>
-<td style='text-align: right;'></td>
-</tr>
-<tr>
-<td style='border-bottom: 2px solid grey; text-align: left;'>Liabilities and Equity</td>
-<td style='border-bottom: 2px solid grey; text-align: right;'>20700</td>
-<td style='border-bottom: 2px solid grey; text-align: right;'>1790</td>
-<td style='border-bottom: 2px solid grey; text-align: right;'>11092</td>
-<td style='border-bottom: 2px solid grey; text-align: right;'></td>
-</tr>
-</tbody>
-</table>
+
+
+| standard.text                                                                   |   APPLE INC |   FACEBOOK INC |   Google Inc. |
+|:--------------------------------------------------------------------------------|------------:|---------------:|--------------:|
+| Assets, Current                                                                 |       7,329 |          1,307 |         7,289 |
+| Assets, Noncurrent                                                              |          NA |             NA |         3,803 |
+| Assets                                                                          |      20,700 |          1,790 |        11,092 |
+| Liabilities, Current                                                            |       4,366 |            110 |         1,591 |
+| Liabilities, Noncurrent                                                         |          NA |             NA |            NA |
+| Liabilities                                                                     |       8,345 |            242 |            NA |
+| Stockholders' Equity Attributable to Parent                                     |      12,355 |          1,547 |         8,731 |
+| Stockholders' Equity Attributable to Noncontrolling Interest                    |          NA |             NA |            NA |
+| Stockholders' Equity, Including Portion Attributable to Noncontrolling Interest |          NA |             NA |            NA |
+| Liabilities and Equity                                                          |      20,700 |          1,790 |        11,092 |
+
+Table: Balance Sheet Comparison
 
 
 ## References

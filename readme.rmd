@@ -33,7 +33,7 @@ and name it as `.Renviron`. To check where your R home is, type `normalizePath("
 Get information about companies and XBRL concepts with `xbrlCIKLookup` 
 and `xbrlBaseElement`: 
 ```{r cache=TRUE}
-library(xbrlus)
+library(xbrlus) 
 
 companies <- xbrlCIKLookup(c(
   "aapl", 
@@ -57,7 +57,7 @@ elements <- xbrlBaseElement(c(
 
 Use `xbrlValues` to get balance sheet values:
 ```{r cache=TRUE}
-values <- xbrlValues(
+values <- xbrlValues( 
   CIK = companies$cik, 
   Element = elements$elementName, 
   DimReqd = FALSE, 
@@ -71,23 +71,31 @@ values <- xbrlValues(
 ```
 
 Reshape to wide format and print table:
-```{r message=FALSE}
+```{r message=FALSE, results='asis'}
 library(dplyr)
 library(tidyr)
-library(htmlTable)
 
 balance_sheet <- 
   elements %>% 
   left_join(values, by = "elementName") %>% 
   select(entity, standard.text, amount) %>% 
   mutate(amount = round(amount / 10e6,0)) %>%  
-  spread(entity, amount )
+  spread(entity, amount)
 
-balance_sheet <- balance_sheet[order(order(elements$elementName)), ]  
-htmlTable(balance_sheet, 
-          align="lrrr", align.header = "lrrr", 
-          rnames = FALSE, 
-          caption = "Bilance Sheet Comparison")
+balance_sheet <- balance_sheet[
+    order(order(elements$elementName)),   
+    !is.na(names(balance_sheet))]
+row.names(balance_sheet) <- NULL
+
+library(pander)
+pandoc.table(
+  balance_sheet,
+  caption = "Balance Sheet Comparison",
+  big.mark = ",",
+  split.table = 200,
+  style = "rmarkdown",
+  justify = c("left", rep("right", 3)))
+
 ```
 
 
