@@ -1,0 +1,95 @@
+---
+title: "xbrlus"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+This package provides an R interface to 
+[XBRL US API](https://github.com/xbrlus/data_analysis_toolkit).
+
+
+## Installation
+
+```{r eval=FALSE}
+devtools::install_github("bergant/xbrlus")
+```
+
+## Setup
+All APIs (except for the `CIKLookup`) require use of a valid XBRL US API
+key. You can get the key and read the terms of usage at
+http://xbrl.us/use/howto/data-analysis-toolkit/.
+
+__xbrlus__ package will read the API key from environment variable
+`XBRLUS_API_KEY`.
+To start R session with the initialized environment variable
+create a file in your R home with a line like this:
+
+`XBRLUS_API_KEY=EnterKeyHere`
+
+and name it as `.Renviron`. To check where your R home is, type `normalizePath("~")` in your R console.
+
+## Usage
+Get information about companies and XBRL concepts with `xbrlCIKLookup` 
+and `xbrlBaseElement`: 
+```{r cache=TRUE}
+library(xbrlus)
+
+companies <- xbrlCIKLookup(c(
+  "aapl", 
+  "goog", 
+  "fb"
+)) 
+
+elements <- xbrlBaseElement(c(
+  "AssetsCurrent",
+  "AssetsNoncurrent",
+  "Assets",
+  "LiabilitiesCurrent",
+  "LiabilitiesNoncurrent",
+  "Liabilities",
+  "StockholdersEquity",
+  "MinorityInterest",
+  "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest",
+  "LiabilitiesAndStockholdersEquity"
+))
+```
+
+Use `xbrlValues` to get balance sheet values:
+```{r cache=TRUE}
+values <- xbrlValues(
+  CIK = companies$cik, 
+  Element = elements$elementName, 
+  DimReqd = FALSE, 
+  Period = "Y",
+  Year = 2013,
+  NoYears = 1,
+  Ultimus = TRUE,
+  Small = TRUE,
+  as_data_frame = TRUE
+)
+```
+
+Reshape to wide format and print table:
+```{r message=FALSE}
+library(dplyr)
+library(tidyr)
+library(htmlTable)
+
+balance_sheet <- 
+  elements %>% 
+  left_join(values, by = "elementName") %>% 
+  select(entity, standard.text, amount) %>% 
+  mutate(amount = round(amount / 10e6,0)) %>%  
+  spread(entity, amount )
+
+balance_sheet <- balance_sheet[order(order(elements$elementName)), ]  
+htmlTable(balance_sheet, 
+          align="lrrr", align.header = "lrrr", 
+          rnames = FALSE, 
+          caption = "Bilance Sheet Comparison")
+```
+
+
+## References
+Data Analysis Toolkit and API description on GitHub: https://github.com/xbrlus/data_analysis_toolkit

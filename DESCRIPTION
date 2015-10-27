@@ -1,0 +1,15 @@
+Package: xbrlus
+Type: Package
+Title: xbrlus - Interface to XBRL US API
+Version: 0.1.1.9001
+Date: 2015-10-27
+Author: Darko Bergant
+Maintainer: Darko Bergant <darko.bergant@gmail.com>
+Description: R inteface to XBRL US API.
+  XBRL US API is a part of
+  XBRL US Data Analysis Toolkit
+  <http://xbrl.us/use/howto/data-analysis-toolkit/>.
+Depends: R (>= 3.2.0)
+License: MIT + file LICENSE
+LazyData: TRUE
+Imports: httr, XML
