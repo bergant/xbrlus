@@ -5,7 +5,7 @@
 \title{Children}
 \usage{
 xbrlChildren(Element, AccessionID = NULL, GroupURI, Linkbase = NULL,
-  Accession = NULL, NetworkLink = NULL)
+  Accession = NULL, NetworkLink = NULL, as_data_frame = TRUE)
 }
 \arguments{
 \item{Element}{The element name in the base taxonomy.
@@ -31,6 +31,8 @@ This parameter does not allow a comma separated list.}
 \item{NetworkLink}{The relationship type that links two elements together.
 For example summation-item in the calculation linkbase or dimension-default
 in the definition linkbase.}
+
+\item{as_data_frame}{Return value in a data frame (default)}
 }
 \description{
 Gets the relationships in a network by passing the extended link role,
@@ -44,10 +46,9 @@ All calls to the API must include the Element parameter name and
 \examples{
 \dontrun{
   xbrlChildren(
-    Element = "IncomeStatementAbstract",
-    AccessionID = "146420",
-    GroupURI = "http://www.ibm.com/role/StatementCONSOLIDATEDSTATEMENTOFEARNINGS",
-    Linkbase = "Calculation"
+    Element = "Assets", AccessionID = 120617,
+    GroupURI = "http://www.thecocacolacompany.com/role/ConsolidatedBalanceSheets",
+    Linkbase = "Calculation", NetworkLink = "summation-item")
   )
 }
 }

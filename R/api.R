@@ -26,9 +26,9 @@ xbrlBaseElement <- function(Element, Namespace = NULL, as_data_frame = TRUE) {
   ret <- xbrlus_get("xbrlBaseElement", list(
     Element=Element,
     Namespace = Namespace
-  ))[[1]]
+  ))
   if(as_data_frame) {
-    ret <- as.data.frame(ret, stringsAsFactors = FALSE)
+    ret <- xbrlus_to_data_frame(ret, "baseElement")
   }
   ret
 }
@@ -85,6 +85,7 @@ xbrlCIKLookup <- function(Ticker, as_data_frame = TRUE) {
 #' @param NetworkLink The relationship type that links two elements together.
 #'   For example summation-item in the calculation linkbase or dimension-default
 #'   in the definition linkbase.
+#' @param as_data_frame Return value in a data frame (default)
 #' @references \url{https://github.com/xbrlus/data_analysis_toolkit/blob/master/api/xbrlChildren.md}
 #' @details All calls to the API must include the Element parameter name and
 #'   at least an AccessionID or an Accession number.
@@ -92,31 +93,36 @@ xbrlCIKLookup <- function(Ticker, as_data_frame = TRUE) {
 #' @examples
 #' \dontrun{
 #'   xbrlChildren(
-#'     Element = "IncomeStatementAbstract",
-#'     AccessionID = "146420",
-#'     GroupURI = "http://www.ibm.com/role/StatementCONSOLIDATEDSTATEMENTOFEARNINGS",
-#'     Linkbase = "Calculation"
+#'     Element = "Assets", AccessionID = 120617,
+#'     GroupURI = "http://www.thecocacolacompany.com/role/ConsolidatedBalanceSheets",
+#'     Linkbase = "Calculation", NetworkLink = "summation-item")
 #'   )
 #' }
 #' @export
 xbrlChildren <- function(Element, AccessionID = NULL, GroupURI,
                          Linkbase = NULL,
                          Accession = NULL,
-                         NetworkLink = NULL) {
-  xbrlus_get("xbrlChildren", list(
-    Element = Element,
-    AccessionID = AccessionID,
-    GroupURI = GroupURI,
-    Linkbase = Linkbase,
-    Accession = Accession,
-    NetworkLink = NetworkLink
-  ))
+                         NetworkLink = NULL,
+                         as_data_frame = TRUE) {
+  ret <-
+    xbrlus_get("xbrlChildren", list(
+      Element = Element,
+      AccessionID = AccessionID,
+      GroupURI = GroupURI,
+      Linkbase = Linkbase,
+      Accession = Accession,
+      NetworkLink = NetworkLink
+    ))
+
+  if(as_data_frame) {
+    ret <- xbrlus_to_data_frame(ret)
+  }
+  ret
 }
 
 #' Extension Element
 #'
-#' Gets the relationships in a network by passing the extended link role,
-#' an element name and the filing number/CIK.
+#' Gets details about elements used in the company extensions.
 #'
 #' @param Element The element name in the base taxonomy.
 #'   This parameter will not take a comma separated list.
@@ -125,6 +131,7 @@ xbrlChildren <- function(Element, AccessionID = NULL, GroupURI,
 #'   This is the accession number used as the filing identifier used by the SEC.
 #' @param Namespace The namespace of the company filing the data is requested for.
 #'   For example http://www.ovt.com/20150430.
+#' @param as_data_frame Return value in a data frame (default)
 #' @references \url{https://github.com/xbrlus/data_analysis_toolkit/blob/master/api/xbrlExtensionElement.md}
 #' @examples
 #' \dontrun{
@@ -146,15 +153,21 @@ xbrlExtensionElement <- function(
   Element,
   AccessionID = NULL,
   Accession = NULL,
-  Namespace = NULL )
+  Namespace = NULL,
+  as_data_frame = TRUE)
 {
 
-  xbrlus_get("xbrlExtensionElement", list(
-    Element = Element,
-    AccessionID = AccessionID,
-    Accession = Accession,
-    Namespace = Namespace
-  ))
+  ret <-
+    xbrlus_get("xbrlExtensionElement", list(
+      Element = Element,
+      AccessionID = AccessionID,
+      Accession = Accession,
+      Namespace = Namespace
+    ))
+  if(as_data_frame) {
+    ret <- xbrlus_to_data_frame(ret, "baseElement")
+  }
+  ret
 }
 
 #' Network
@@ -172,6 +185,7 @@ xbrlExtensionElement <- function(
 #'   This is the accession number used as the filing identifier used by the SEC.
 #' @param CIK CIK of the Company. This must be 10 digits in length.
 #'   This parameter allows a comma separated list.
+#' @param as_data_frame Return value in a data frame (default)
 #' @details This API allows the user to fetch details about a report
 #'   (Group/Network/Extended link role) in an XBRL filing that an element
 #'   appears in such as the balance sheet or income statement.
@@ -188,7 +202,7 @@ xbrlExtensionElement <- function(
 #' @references \url{https://github.com/xbrlus/data_analysis_toolkit/blob/master/api/xbrlNetwork.md}
 #' @examples
 #' \dontrun{
-#'   xbrlNetwork(Element="Assets", AccessionID = 103575)
+#'   xbrlNetwork(Element = "Assets", AccessionID = 120617, Linkbase = "Calculation")
 #' }
 #' @export
 xbrlNetwork <- function(
@@ -196,16 +210,24 @@ xbrlNetwork <- function(
   Linkbase = NULL,
   AccessionID = NULL,
   Accession = NULL,
-  CIK = NULL )
+  CIK = NULL,
+  as_data_frame = TRUE)
 {
 
-  xbrlus_get("xbrlNetwork", list(
-    Element = Element,
-    Linkbase = Linkbase,
-    AccessionID = AccessionID,
-    Accession = Accession,
-    CIK = CIK
-  ))
+  ret <-
+    xbrlus_get("xbrlNetwork", list(
+      Element = Element,
+      Linkbase = Linkbase,
+      AccessionID = AccessionID,
+      Accession = Accession,
+      CIK = CIK
+    ))
+
+
+  if(as_data_frame) {
+    ret <- xbrlus_to_data_frame(ret)
+  }
+  ret
 }
 
 
@@ -283,29 +305,11 @@ xbrlNetwork <- function(
 #' }
 #' @export
 xbrlValues <- function(
-  AccessionID = NULL,
-  Accession = NULL,
-  CIK = NULL,
-  Restated = NULL,
-
-  Element = NULL,
-  Axis = NULL,
-  Member = NULL,
-  Dimension = NULL,
-  DimReqd = NULL,
-  ExtensionElement = NULL,
-  ExtensionAxis = NULL,
-  ExtensionMember = NULL,
-
-  Period = NULL,
-  StartYear = NULL,
-  NoYears = NULL,
-  Year = NULL,
-  Ultimus = NULL,
-
-  Small = NULL,
-
-  as_data_frame = TRUE
+  AccessionID = NULL, Accession = NULL, CIK = NULL, Restated = NULL,
+  Element = NULL, Axis = NULL, Member = NULL, Dimension = NULL, DimReqd = NULL,
+  ExtensionElement = NULL, ExtensionAxis = NULL, ExtensionMember = NULL,
+  Period = NULL, StartYear = NULL, NoYears = NULL, Year = NULL, Ultimus = NULL,
+  Small = NULL, as_data_frame = TRUE
 )
 {
   if(length(CIK) > 1) {
@@ -342,14 +346,7 @@ xbrlValues <- function(
 
   if(as_data_frame) {
     # convert to data frame
-    ret <- do.call(
-      rbind,
-      c(lapply(ret[names(ret) == "fact"], function(x) {
-        x[sapply(x,is.null)] <- NA
-        as.data.frame(x, stringsAsFactors = FALSE)
-      }),
-      make.row.names = FALSE)
-    )
+    ret <- xbrlus_to_data_frame(ret)
 
     # convert dates and numbers
     numeric_cols <- intersect(c("amount", "decimals", "fact"), names(ret))

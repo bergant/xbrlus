@@ -5,7 +5,7 @@
 \title{Network}
 \usage{
 xbrlNetwork(Element, Linkbase = NULL, AccessionID = NULL,
-  Accession = NULL, CIK = NULL)
+  Accession = NULL, CIK = NULL, as_data_frame = TRUE)
 }
 \arguments{
 \item{Element}{The element name in the base taxonomy.
@@ -22,6 +22,8 @@ This is the accession number used as the filing identifier used by the SEC.}
 
 \item{CIK}{CIK of the Company. This must be 10 digits in length.
 This parameter allows a comma separated list.}
+
+\item{as_data_frame}{Return value in a data frame (default)}
 }
 \description{
 Gets the relationships in a network by passing the extended link role,
@@ -44,7 +46,7 @@ This API allows the user to fetch details about a report
 }
 \examples{
 \dontrun{
-  xbrlNetwork(Element="Assets", AccessionID = 103575)
+  xbrlNetwork(Element = "Assets", AccessionID = 120617, Linkbase = "Calculation")
 }
 }
 \references{

@@ -74,3 +74,15 @@ xbrlus_parse <- function(res) {
   XML::xmlToList(doc)
 }
 
+xbrlus_to_data_frame <- function(ret, element_name = "fact") {
+  if(!any(names(ret) == element_name)) return(data.frame())
+  ret <- do.call(
+    rbind,
+    c(lapply(ret[names(ret) == element_name], function(x) {
+      x[sapply(x,is.null)] <- NA
+      as.data.frame(x, stringsAsFactors = FALSE)
+    }),
+    make.row.names = FALSE)
+  )
+}
+

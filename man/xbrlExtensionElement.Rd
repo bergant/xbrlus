@@ -5,7 +5,7 @@
 \title{Extension Element}
 \usage{
 xbrlExtensionElement(Element, AccessionID = NULL, Accession = NULL,
-  Namespace = NULL)
+  Namespace = NULL, as_data_frame = TRUE)
 }
 \arguments{
 \item{Element}{The element name in the base taxonomy.
@@ -18,10 +18,11 @@ This is the accession number used as the filing identifier used by the SEC.}
 
 \item{Namespace}{The namespace of the company filing the data is requested for.
 For example http://www.ovt.com/20150430.}
+
+\item{as_data_frame}{Return value in a data frame (default)}
 }
 \description{
-Gets the relationships in a network by passing the extended link role,
-an element name and the filing number/CIK.
+Gets details about elements used in the company extensions.
 }
 \details{
 This API allows the user to fetch details of about elements used in
