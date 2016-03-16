@@ -54,7 +54,7 @@ xbrlus_validate <- function(res) {
     stop("Not a HTTP response object")
   }
   if(res$status_code >= 400) {
-    err_message <- httr::content(res, as = "text")
+    err_message <- httr::content(res, as = "text", encoding = "UTF-8")
     if( XML::isXMLString(err_message)) {
       doc <- XML::xmlParse(err_message, options = XML::NOCDATA)
       lerror <- XML::xmlToList(doc)
@@ -69,7 +69,7 @@ xbrlus_validate <- function(res) {
 }
 
 xbrlus_parse <- function(res) {
-  res_txt <- httr::content(res, as = "text")
+  res_txt <- httr::content(res, as = "text", encoding = "UTF-8")
   doc <- XML::xmlParse(res_txt, asText = TRUE, options = XML::NOCDATA)
   XML::xmlToList(doc)
 }

@@ -4,6 +4,7 @@ This package provides an R interface to
 [XBRL US API](https://github.com/xbrlus/data_analysis_toolkit).
 
 
+
 ## Installation
 
 
