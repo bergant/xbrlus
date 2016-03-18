@@ -14,14 +14,17 @@
 #' @export
 xbrlBaseElement <- function(Element, Namespace = NULL, as_data_frame = TRUE) {
   if(length(Element) > 1) {
-    return(do.call(
-      rbind,
-      c(
-        lapply(Element, xbrlBaseElement,
-               Namespace = Namespace,
-               as_data_frame = as_data_frame),
-        make.row.names = FALSE)
-    ))
+
+    ret_list <-
+      lapply(
+        Element, xbrlBaseElement,
+        Namespace = Namespace, as_data_frame = as_data_frame
+      )
+    # using Reduce/merge instead of do.call/rbind because some columns
+    #  in xbrlus database could be missing (see #3 issue)
+    ret_df <- Reduce(function(x, y) {merge(x, y, all = TRUE)}, ret_list)
+    return(ret_df)
+
   }
   ret <- xbrlus_get("xbrlBaseElement", list(
     Element=Element,
