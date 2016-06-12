@@ -348,6 +348,9 @@ xbrlValues <- function(
     ))
 
   if(as_data_frame) {
+    # API returns count == 0 if there is no data
+    if(!is.null(ret$count) && ret$count == 0) return(data.frame())
+
     # convert to data frame
     ret <- xbrlus_to_data_frame(ret)
 
