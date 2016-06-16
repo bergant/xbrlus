@@ -123,6 +123,68 @@ xbrlChildren <- function(Element, AccessionID = NULL, GroupURI,
   ret
 }
 
+#' Taxonomy Children
+#'
+#' Gets relationships in a base taxonomy by passing the extended link role
+#' (GroupURI), an element name and the namespace of a given taxonomy. The API
+#' will return all children of the specified element plus attributes such as
+#' weight, order and preferred labels. It will return multiple results. The API
+#' also allows the user to specify the different linkbases and relationship
+#' types associated with a report or network. For example a user can request the
+#' calculation children of Assets in the balance sheet defined in the base
+#' taxonomy.
+#'
+#' @param Element The element name in the base taxonomy. This parameter will not
+#'   take a comma separated list.
+#' @param Taxonomy The namespace of the taxonomy the element is in. The
+#'   parameter allows you to get details from specific taxonomies.
+#' @param GroupURI The extended link role in an XBRL report that is defined by
+#'   the company.
+#' @param Linkbase The type of network relationship. This could be a
+#'   Presentation, Calculation or Definition. If this is not entered then all
+#'   will be returned.
+#' @param ResetCache If set to True the query will pull the data from the
+#'   database and will not use a cached file if it is available. Setting the
+#'   parameter to False will utilize cache and will be faster.
+#' @param as_data_frame Return value in a data frame (default)
+#' @references
+#' \url{https://github.com/xbrlus/data_analysis_toolkit/blob/master/api/xbrlTaxChildren.md}
+#'
+#' @details All calls to the API must include the Element parameter name and at
+#'   least an AccessionID or an Accession number. In addition the extended link
+#'   role must be reported.
+#' @examples
+#' \dontrun{
+#' xbrlTaxChildren(
+#'   Element = "InterestExpenseBorrowings",
+#'   Taxonomy = "http://fasb.org/us-gaap/2015-01-31",
+#'   GroupURI = "http://fasb.org/us-gaap/role/statement/StatementOfIncome",
+#'   Linkbase = "Calculation"
+#' )
+#'
+#' }
+#' @export
+xbrlTaxChildren <- function(Element,
+                         Taxonomy,
+                         GroupURI,
+                         Linkbase = NULL,
+                         ResetCache = FALSE,
+                         as_data_frame = TRUE) {
+  ret <-
+    xbrlus_get("xbrlTaxChildren", list(
+      Element = Element,
+      Taxonomy = Taxonomy,
+      GroupURI = GroupURI,
+      Linkbase = Linkbase,
+      ResetCache = ResetCache
+    ))
+
+  if(as_data_frame) {
+    ret <- xbrlus_to_data_frame(ret)
+  }
+  ret
+}
+
 #' Extension Element
 #'
 #' Gets details about elements used in the company extensions.

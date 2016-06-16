@@ -1,8 +1,8 @@
 Package: xbrlus
 Type: Package
 Title: Interface to XBRL US API
-Version: 0.1.1.9001
-Date: 2015-10-27
+Version: 0.1.2
+Date: 2016-06-16
 Author: Darko Bergant
 Maintainer: Darko Bergant <darko.bergant@gmail.com>
 Description: R interface to XBRL US API.
