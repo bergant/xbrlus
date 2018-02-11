@@ -62,7 +62,7 @@ xbrlus_validate <- function(res) {
     }
     stop("HTTP error: ", res$status_code, "\n", err_message, call. = FALSE)
   }
-  if(res$headers$`content-type` != "text/xml") {
+  if(substring(res$headers$`content-type`, 1, 8) != "text/xml") {
     stop("Returned message is not an xml", call. = FALSE)
   }
 
