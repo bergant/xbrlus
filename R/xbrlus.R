@@ -4,7 +4,7 @@
 #'
 #' All APIs (except for the CIKLookup) require use of a valid XBRL US API
 #' key. You can get the key and read the terms of usage at
-#' \url{http://xbrl.us/use/howto/data-analysis-toolkit/}.
+#' \url{https://xbrl.us/use/howto/data-analysis-toolkit/}.
 #'
 #' \pkg{xbrlus} functions will read the API key from environment variable
 #' \code{XBRLUS_API_KEY}.
@@ -25,7 +25,7 @@
 #' @aliases xbrlus
 NULL
 
-xbrlus_url <- "http://csuite.xbrl.us/php/dispatch.php?"
+xbrlus_url <- "https://csuite.xbrl.us/php/dispatch.php?"
 
 
 
