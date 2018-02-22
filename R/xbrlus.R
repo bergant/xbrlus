@@ -25,7 +25,7 @@
 #' @aliases xbrlus
 NULL
 
-xbrlus_url <- "http://csuite.xbrl.us/php/dispatch.php?"
+xbrlus_url <- "https://csuite.xbrl.us/php/dispatch.php?"
 
 
 
